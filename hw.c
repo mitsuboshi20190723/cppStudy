@@ -3,7 +3,7 @@
 void print(void);
 
 int main(int argc, char *argv[]){
-  print();
+  printf("Hello,wold.\n");
   return 0;
 }
 
