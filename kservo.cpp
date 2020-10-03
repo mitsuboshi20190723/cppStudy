@@ -6,7 +6,7 @@
 #include <ics3/ics>
 
 
-main()
+int main(int argc, char *argv[])
 {
 	ics::ICS3 s {"/dev/ttyUSB0", ics::Baudrate::RATE115200()};
 	auto d=50;
