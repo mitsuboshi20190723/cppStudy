@@ -6,5 +6,5 @@ project(Study)
 add_executable(HW hw.cpp)
 
 
-add_executable(KSERVO kservo.cpp)
+add_executable(KSERVO serial/kservo.cpp)
 target_link_libraries(KSERVO ics3)
