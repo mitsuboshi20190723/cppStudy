@@ -1,0 +1,21 @@
+"
+" :sp
+" :vs
+" :close :only
+"
+" :set list and :set nolist
+"
+" :set noexpandtab for Makefile
+"
+
+set number
+
+set tabstop=4
+set shiftwidth=4
+" set softtabstop=4
+" set expandtab
+
+" nnoremap <space>. :<c-u>tabedit $MYVIMRC<CR>
+" nnoremap <space>. :<c-u>tabedit ~/.vimrc<CR>
+
+" inoremap jj <Esc>
