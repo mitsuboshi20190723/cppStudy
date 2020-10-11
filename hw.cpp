@@ -1,7 +1,7 @@
 /*
- *  2020.10.3
+ *  2020.10.10
  *  hw.cpp
- *  ver 1.0
+ *  ver 1.2
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,9 +11,13 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
-	cout << "Hello world." << endl;
+	cout << "Hello world!" << endl;
+
+	/* "echo | gcc -dM -E -" or "gcc -dM -E hw.cpp" */
+	cout << "defined macro __GNUC__ is " << __GNUC__ << endl;
+
 	return 0;
 }
 
