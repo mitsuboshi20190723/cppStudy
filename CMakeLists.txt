@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.8)
 
 project(Study)
 
 
-add_executable(HW hw.cpp)
+add_executable(HW hello_world/hw.cpp)
+
+# find_package(CUDA REQUIRED)
+# cuda_add_executable(MATADD cuda/matadd.cu)
 
 
 add_executable(KSERVO serial/kservo.cpp)

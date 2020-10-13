@@ -1,5 +1,5 @@
-hw	: hw.c
-	gcc -o hw hw.c
+hw	: hello_world/hw.c
+	gcc -o hw hello_world/hw.c
 
 kekka	: math/kekka.c
 	gcc math/kekka.c -o kekka -lm
@@ -7,8 +7,8 @@ kekka	: math/kekka.c
 kservo	: serial/kservo.cpp
 	g++ -std=c++11 -o kservo serial/kservo.cpp -lics3
 
-cuda    : cuda.cu
-	nvcc -o cuda cuda.cu
+# matadd	: cuda/matadd.cu
+#	nvcc -o matadd cuda/matadd.cu
 
 clean	:
-	rm hw kekka kservo cuda
+	rm hw kekka kservo matadd 
