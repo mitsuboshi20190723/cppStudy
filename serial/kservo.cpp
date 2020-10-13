@@ -30,7 +30,7 @@
 #define JOY_DEV "/dev/input/js0"
 #define SERVO_DEV "/dev/ttyUSB0"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int joy(-1), num_of_axis(0), num_of_buttons(0);
 	char name_of_joystick[80];
