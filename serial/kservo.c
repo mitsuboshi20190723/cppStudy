@@ -1,7 +1,7 @@
 /*
  *  2020.12.6
  *  kservo.c
- *  ver 0.1
+ *  ver 1.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -23,14 +23,13 @@ unsigned char P3968[] = {0x81, 0x1F, 0x00};
 int main(int argc, char *argv[])
 {
 	unsigned char buf[256];
-	int fd;
+	int fd, len, i;
 	struct termios tio;
-	int i;
-	int len;
+
 
 	fd = open("/dev/ttyUSB0", O_RDWR);
 	if (fd < 0) {
-		printf("Donnot open /dev/ttyUSB0\n");
+		printf("Do not open /dev/ttyUSB0\n");
 		return -1;
 	}
 
