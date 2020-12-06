@@ -1,6 +1,6 @@
 /*
  *  2020.10.4
- *  kservo.cpp
+ *  joynics.cpp
  *  ver 0.9
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
