@@ -12,6 +12,9 @@ kservo	: serial/kservo.c
 joynics	: serial/joynics.cpp
 	g++ -std=c++11 -o $(BUILD)/JOYNICS serial/joynics.cpp -lics3
 
+fd	: math/fd.cpp
+	g++ -o $(BUILD)/FD math/fd.cpp -ldlib -llapack -lblas  -lX11 -lpthread -ljpeg -lpng -lgif
+
 # matadd	: cuda/matadd.cu
 #	nvcc -o MATADD cuda/matadd.cu
 

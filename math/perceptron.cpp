@@ -1,5 +1,5 @@
 /*
- *  2020.11.6
+ *  2020.12.6
  *  perceptron.cpp
  *  ver 1.0
  *  Kunihito Mitsuboshi
