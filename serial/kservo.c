@@ -1,7 +1,7 @@
 /*
- *  2020.12.6
+ *  2020.12.20
  *  kservo.c
- *  ver 1.0
+ *  ver 2.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -19,11 +19,41 @@
 unsigned char P7500[] = {0x81, 0x3A, 0x4C};
 unsigned char P3968[] = {0x81, 0x1F, 0x00};
 
+int set_pos(int dev, char id, double deg)
+{
+	int pos, tx_len=3;
+	int i, rx_len;
+	unsigned char buf[10], *cmd, *pos_h, *pos_l;
+
+	if(deg > 135 || deg < -135) return 0;
+
+	cmd = buf; 
+	*cmd = 0x80 & id;
+
+	pos = (int)(deg / 0.034) + 7500;
+
+	pos_h = buf + 1;
+	*pos_h = (unsigned char)(pos%128 & 127);
+	pos_l = buf + 2;
+	*pos_l = (unsigned char)(pos & 127);
+
+	write(dev, buf, tx_len);
+
+	rx_len = read(dev, buf, sizeof(buf));
+	if(0 < rx_len)
+	{
+		pos = (int)buf[4] * 128 + buf[5];
+		for(i = 0; i < rx_len; i++) printf("%02X ", buf[i]);
+		printf("\n");
+	}
+	else pos = -1;
+
+	return pos;
+}
 
 int main(int argc, char *argv[])
 {
-	unsigned char buf[256];
-	int fd, len, i;
+	int fd;
 	struct termios tio;
 
 
@@ -48,15 +78,12 @@ int main(int argc, char *argv[])
 	sleep(1);
 	write(fd, P3968, 3);
 	usleep(1*1000*1000);
-	write(fd, P7500, 3);
 
-	len = read(fd, buf, sizeof(buf));
-	if (0 < len)
-	{
-		for(i = 0; i < len; i++) printf("%02X ", buf[i]);
-		printf("\n");
-	}
-
+	set_pos(fd, 1, 0);
+	sleep(1);
+	set_pos(fd, 1, -90);
+	usleep(1*1000*1000);
+	set_pos(fd, 1, 0);
 
 	close(fd);
 	return 0;

@@ -10,5 +10,7 @@ add_executable(hw hello_world/hw.cpp)
 
 add_executable(perceptron math/perceptron.cpp)
 
-add_executable(kservo serial/kservo.cpp)
+add_executable(pantilt serial/pantilt.cpp)
+
+add_executable(kservo serial/kservo.c)
 target_link_libraries(kservo ics3)
