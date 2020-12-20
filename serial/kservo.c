@@ -28,21 +28,25 @@ int set_pos(int dev, char id, double deg)
 	if(deg > 135 || deg < -135) return 0;
 
 	cmd = buf; 
-	*cmd = 0x80 & id;
+	*cmd = 0x80 | id;
 
 	pos = (int)(deg / 0.034) + 7500;
 
 	pos_h = buf + 1;
-	*pos_h = (unsigned char)(pos%128 & 127);
+	*pos_h = (unsigned char)(pos/128 & 127);
 	pos_l = buf + 2;
 	*pos_l = (unsigned char)(pos & 127);
 
+	printf("TX : "); for(i = 0; i < tx_len; i++) printf("%02X ", buf[i]); printf("\n");
 	write(dev, buf, tx_len);
+
+//	usleep(0.1*1000*1000);
 
 	rx_len = read(dev, buf, sizeof(buf));
 	if(0 < rx_len)
 	{
 		pos = (int)buf[4] * 128 + buf[5];
+		printf("RX : ");
 		for(i = 0; i < rx_len; i++) printf("%02X ", buf[i]);
 		printf("\n");
 	}
@@ -81,7 +85,7 @@ int main(int argc, char *argv[])
 
 	set_pos(fd, 1, 0);
 	sleep(1);
-	set_pos(fd, 1, -90);
+	set_pos(fd, 1, 90);
 	usleep(1*1000*1000);
 	set_pos(fd, 1, 0);
 

@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-#include <iomanip>
+//#include <iomanip>
 #include <vector>
 #include <cstdio>
 #include <fcntl.h>
@@ -23,8 +23,8 @@
 
 #include <stdexcept>
 #include <fstream>
-#include <chrono>
-#include <thread>
+#include <chrono> /* std::this_thread::sleep_for(std::chrono::seconds(3)); sleep(3);*/
+#include <thread> /* std::this_thread::sleep_for(std::chrono::microseconds(3)); usleep(3);*/
 #include <ics3/ics>
 
 #define JOY_DEV "/dev/input/js0"
