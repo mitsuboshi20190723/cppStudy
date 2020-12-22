@@ -1,7 +1,7 @@
 /*
  *  2020.12.22
- *  pantilt.cpp
- *  ver 0.2
+ *  joynics2.cpp
+ *  ver 1.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -122,7 +122,7 @@ int icsservo::get_eeprom(uchar id)
 //		std::cout << ",   RX_LEN : " << std::dec << rx_len << std::endl;
 		if(id == ((int)buf[4+57-1] & 15) * 16 + (int)buf[4+58-1] & 15)
 		{
-			memcpy(r.param, buf+4, ISC_EEPROM_SIZE);
+			memcpy(r.param, buf+4, 64);
 			r.id = id;
 			this->id.push_back(r);
 		}
