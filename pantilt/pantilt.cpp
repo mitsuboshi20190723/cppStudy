@@ -1,5 +1,5 @@
 /*
- *  2020.12.22
+ *  2020.12.24
  *  pantilt.cpp
  *  ver 0.2
  *  Kunihito Mitsuboshi
@@ -14,7 +14,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <termios.h> /* servo */
+#include <termios.h>
 #include <string.h>
 #include <linux/joystick.h>
 
@@ -91,14 +91,14 @@ int icsservo::connect(const char *df)
 	tcsetattr(this->c, TCSANOW, &tio);
 	// ioctl(this->c, TCSETS, &tio);
 
-	for(i=0; i<32; i++) if(this->get_eeprom(i) < 0) printf("EEPROM ERROR\n");
+	for(i=0; i<32; i++) if(this->get_eeprom(i) >= 0) printf("ID%d servo found.\n", i);
 
 	return this->c;
 }
 
 int icsservo::disconnect()
 {
-	close(this->c);
+	return close(this->c);
 }
 
 int icsservo::get_eeprom(uchar id)
@@ -164,17 +164,19 @@ int joystick::connect(const char *df)
 	if (this->c < 0) return -1;
 
 	ioctl(this->c, JSIOCGAXES, &num_of_axis);
-	this->joy_a.resize(num_of_axis,0);
+	this->joy_a.resize(num_of_axis, 0); // if raspi this->joy_a.resize(8,0); // F310
 	ioctl(this->c, JSIOCGBUTTONS, &num_of_buttons);
-	this->joy_b.resize(num_of_buttons,0);
+	this->joy_b.resize(num_of_buttons, 0); // if raspi this->joy_b.resize(11,0); // F310
 	ioctl(this->c, JSIOCGNAME(80), &this->name_of_joystick);
 
+	std::cout << "name : " << this->name_of_joystick << std::endl;
+	std::cout << "axis : " << num_of_axis << ", buttons : " << num_of_buttons << std::endl;
 	return this->c;
 }
 
 int joystick::disconnect()
 {
-	close(this->c);
+	return close(this->c);
 }
 
 double joystick::get_ctl(int num)
@@ -192,9 +194,8 @@ double joystick::get_ctl(int num)
 		break;
 	}
 
-	return (double)this->joy_a[num] * AXIS_PERSTEP ;
+	return (double)this->joy_a[num] * AXIS_PERSTEP;
 }
-
 
 
 #define JOY_DEV "/dev/input/js0"
@@ -206,10 +207,8 @@ int main(int argc, char **argv)
 	icsservo sd;
 	double deg(0);
 
-
 	if(jd.connect("/dev/input/js0") < 0) { printf("Do not open /dev/input/js0\n"); return -1; }
 	if(sd.connect("/dev/ttyUSB0") < 0) { printf("Do not open /dev/ttyUSB0\n"); return -1; }
-
 
 	while(true)
 	{
@@ -218,12 +217,11 @@ int main(int argc, char **argv)
 		sd.set_pos(2, -jd.get_ctl(1)/4); /* tilt */
 
 		deg = jd.get_ctl(3);
-		std::cout << deg << std::endl;
-		sd.set_pos(3, deg/4);
+		std::cout << deg*3/4 << std::endl;
+		sd.set_pos(3, deg*3/4);
 
 		std::this_thread::sleep_for(std::chrono::microseconds(1000));
 	}
-
 
 	jd.disconnect();
 	sd.disconnect();
