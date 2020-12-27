@@ -110,7 +110,7 @@ int joystick::connect(const char *df)
 	int num_of_axis, num_of_buttons;
 
 	this->c = open(df, O_RDONLY);
-	if (this->c < 0) return this->c;
+	if(this->c < 0) return this->c;
 
 	ioctl(this->c, JSIOCGAXES, &num_of_axis);
 	this->a.resize(num_of_axis, 0);
@@ -121,7 +121,7 @@ int joystick::connect(const char *df)
 	// this->a.resize(num_of_axis, 0);
 	// this->b.resize(num_of_buttons, 0);
 
-	std::cout << "name : " << this->name_of_joystick << " joystick found. " ;// << std::endl;
+	std::cout << "name : " << this->name_of_joystick << " joystick found. ";
 	std::cout << "axis : " << num_of_axis << ", buttons : " << num_of_buttons << std::endl;
 
 	return this->c;
