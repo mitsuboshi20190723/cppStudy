@@ -207,8 +207,8 @@ int main(int argc, char **argv)
 	icsservo sd;
 	double deg(0);
 
-	if(jd.connect("/dev/input/js0") < 0) { printf("Do not open /dev/input/js0\n"); return -1; }
-	if(sd.connect("/dev/ttyUSB0") < 0) { printf("Do not open /dev/ttyUSB0\n"); return -1; }
+	if(jd.connect(JOY_DEV) < 0) { printf("Do not open /dev/input/js0\n"); return -1; }
+	if(sd.connect(SERVO_DEV) < 0) { printf("Do not open /dev/ttyUSB0\n"); return -1; }
 
 	while(true)
 	{
