@@ -5,7 +5,7 @@ project(Study)
 
 add_executable(hw hello_world/hw.cpp)
 
-
+find_package(OpenCV REQUIRED)
 # find_package(CUDA REQUIRED)
 # cuda_add_executable(matadd cuda/matadd.cu)
 
@@ -18,6 +18,13 @@ add_executable(joynics2 serial/joynics2.cpp)
 
 add_executable(kservo serial/kservo.c)
 target_link_libraries(kservo ics3)
+
+
+if(OpenCV_FOUND)
+    include_directories(${OpenCV_INCLUDE_DIRS})
+    add_executable(webcam pantilt/webcam.cpp)
+    target_link_libraries(webcam ${OpenCV_LIBS})
+endif(OpenCV_FOUND)
 
 
 add_library(motion pantilt/motion.cpp)
