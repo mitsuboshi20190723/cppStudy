@@ -1,5 +1,5 @@
 /*
- *  2020.12.28
+ *  2021.1.31
  *  pantilt.cpp
  *  ver 1.0
  *  Kunihito Mitsuboshi
@@ -29,14 +29,14 @@ int main(int argc, char **argv)
 {
 	joystick jd;
 	icsservo sd;
-	motion pan, tilt, grad;
+	motion pan, tilt, /*grad*/;
 
 	if(jd.connect(JOY_DEV) < 0) { std::cout << "Do not open " << JOY_DEV << std::endl; return -1; }
 	if(sd.connect(SERVO_DEV) < 0) { std::cout << "Do not open " << SERVO_DEV << std::endl; return -1; }
 
 	pan.set_motion(jd.axis(0), AXIS_NEUTRAL, AXIS_PERSTEP*0.5, 1, SERVO_NEUTRAL, SERVO_PERSTEP);
 	tilt.set_motion(jd.axis(1), AXIS_NEUTRAL, AXIS_PERSTEP*-0.25, 2, SERVO_NEUTRAL, SERVO_PERSTEP);
-	grad.set_motion(jd.axis(3), AXIS_NEUTRAL, AXIS_PERSTEP*0.75, 3, SERVO_NEUTRAL, SERVO_PERSTEP);
+//	grad.set_motion(jd.axis(3), AXIS_NEUTRAL, AXIS_PERSTEP*0.75, 3, SERVO_NEUTRAL, SERVO_PERSTEP);
 
 	while(true)
 	{
@@ -44,9 +44,9 @@ int main(int argc, char **argv)
 
 		sd.set_pos( jd.get_ctl( &tilt ) );
 
-		jd.get_ctl( &grad );
-	//	std::cout << grad.a << std::endl;
-		sd.set_pos( &grad );
+//		jd.get_ctl( &grad );
+//		std::cout << grad.a << std::endl;
+//		sd.set_pos( &grad );
 
 		std::this_thread::sleep_for(std::chrono::microseconds(1000));
 	}
