@@ -30,13 +30,14 @@ int main(int argc, char **argv)
 	w = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 	h = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 	f = cap.get(cv::CAP_PROP_FPS);
-	t = cap.get(cv::CAP_PROP_FORMAT); //2:RGB24
+	t = cap.get(cv::CAP_PROP_FORMAT);
 	std::cout << "w=" << w << ",h=" << h << ",fps=" << f << std::endl;
 	std::cout << "FORMAT=" << t << std::endl;
 
-	cap.set(cv::CAP_PROP_FRAME_WIDTH, w);
-	cap.set(cv::CAP_PROP_FRAME_HEIGHT, h);
-	cap.set(cv::CAP_PROP_FPS, f);
+	cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+	cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+	cap.set(cv::CAP_PROP_FPS, 30);
+	cap.set(cv::CAP_PROP_FORMAT, 2);
 
 	cv::Mat img;
 	cv::namedWindow("camera", cv::WINDOW_AUTOSIZE);

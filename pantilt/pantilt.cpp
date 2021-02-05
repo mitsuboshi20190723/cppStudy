@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 {
 	joystick jd;
 	icsservo sd;
-	motion pan, tilt, /*grad*/;
+	motion pan, tilt/*, grad*/;
 
 	if(jd.connect(JOY_DEV) < 0) { std::cout << "Do not open " << JOY_DEV << std::endl; return -1; }
 	if(sd.connect(SERVO_DEV) < 0) { std::cout << "Do not open " << SERVO_DEV << std::endl; return -1; }
