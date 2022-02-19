@@ -1,17 +1,17 @@
 /*
- *  2020.10.10
+ *  2022.2.17
  *  hw.cpp
- *  ver 1.2
+ *  ver 2.2
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-
 #include <iostream>
+
 
 using namespace std;
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	cout << "Hello world!" << endl;
 

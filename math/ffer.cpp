@@ -1,7 +1,7 @@
 /*
- *  2022.2.15
+ *  2022.2.20
  *  ffer.cpp
- *  ver 0.5
+ *  ver 1.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -12,26 +12,32 @@
 #include <iostream>
 #include <string>
 
-
 class multiplication
 {
 private:
-	std::string stand = "0123456789ABCDEF";
-	std::string upper = "QRSTUVWXYZABCDEF";
-	std::string lower = "qrstuvwxyzabcdef";
-	std::string mbg = "     ";
-	int m;
+	static int mode;
+	static std::string stand;
+	static std::string upper;
+	static std::string lower;
+	static std::string *sp[3];
 
 public:
 	int multiply;
 	int by;
 	int get;
+	std::string mbg = "     "; /* mbg("     ")  or  mbg(5, ' ') */
 
 	int cal(int m, int b);
-	std::string* set_mode(int m);
+	std::string print();
+	std::string set_mode(int m);
 	int get_num(char *c);
-	std::string* print();
 };
+
+int multiplication::mode = 0;
+std::string multiplication::stand = "0123456789ABCDEF"; /* mode==0 */
+std::string multiplication::upper = "QRSTUVWXYZABCDEF"; /* mode==1 */
+std::string multiplication::lower = "qrstuvwxyzabcdef"; /* mode==2 */
+std::string *multiplication::sp[3] = {&stand, &upper, &lower};
 
 int multiplication::cal(int m, int b)
 {
@@ -42,10 +48,24 @@ int multiplication::cal(int m, int b)
 	return this->get;
 }
 
-std::string* multiplication::set_mode(int m)
+std::string multiplication::print()
 {
-	this->m = m<0 || m>2 ? 0 : m;
-	return &upper;
+	std::string str(*this->sp[this->mode]);
+
+	this->mbg[0] = str[this->multiply];
+	this->mbg[1] = str[this->by];
+	this->mbg[2] = str[this->get/16];
+	this->mbg[3] = str[this->get%16];
+	this->mbg[4] = '\0';
+
+	return this->mbg;
+}
+
+std::string multiplication::set_mode(int m)
+{
+	this->mode = m<0 || m>2 ? 0 : m;
+
+	return *this->sp[this->mode];
 }
 
 int multiplication::get_num(char *c)
@@ -64,34 +84,14 @@ int multiplication::get_num(char *c)
 	return -1;
 }
 
-std::string* multiplication::print()
-{
-	std::string *s;
-
-	switch(this->m)
-	{
-	case 0:
-		std::cout << stand[this->multiply] << stand[this->by] << stand[this->get/16] << stand[this->get%16];
-		break;
-	case 1:
-		std::cout << upper[this->multiply] << upper[this->by] << upper[this->get/16] << upper[this->get%16];
-		break;
-	case 2:
-		std::cout << lower[this->multiply] << lower[this->by] << lower[this->get/16] << lower[this->get%16];
-		break;
-	}
-
-	return &mbg;
-}
 
 multiplication chk_arg(int c, char **v)
 {
-	int count=0;
+	int count = 0;
 	multiplication m;
 
 	m.cal(0, 0);
 	m.get = -1;
-	m.set_mode(0);
 
 //	std::cout << v[0] << std::endl;
 
@@ -99,7 +99,7 @@ multiplication chk_arg(int c, char **v)
 	{
 		if(v[i][0] == '-')
 		{
-			switch(v[i][1])
+			switch( v[i][1] )
 			{
 			case '0':
 				m.set_mode(0);
@@ -119,7 +119,7 @@ multiplication chk_arg(int c, char **v)
 		{
 			m.get = m.get_num(v[i]);
 			if(m.get < 0){std::cout << "Not number found." << std::endl; exit(0);}
-			switch(count)
+			switch( count )
 			{
 			case 0:
 				m.multiply = m.get;
@@ -133,6 +133,7 @@ multiplication chk_arg(int c, char **v)
 		}
 	}
 	if(count==1 || count>2){std::cout << count << "Need 2 numbers." << std::endl; exit(0);};
+
 	return m;
 }
 
@@ -151,18 +152,15 @@ int main(int argc, char **argv)
 			for(b=1; b<16; b++)
 			{
 				h.cal(m, b);
-				h.print();
-				std::cout << " ";
+				std::cout << h.print() << " ";
 			}
 			std::cout << std::endl;
 		}
 	}
 	else
 	{
-		h.print();
-		std::cout << std::endl;
+		std::cout << h.print() << std::endl;
 	}
 
-//	std::cout << h.multiply << " * " << h.by << " = " << h.get << std::endl;
 	return 0;
 }
