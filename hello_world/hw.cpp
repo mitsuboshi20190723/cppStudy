@@ -1,10 +1,11 @@
 /*
- *  2022.2.17
+ *  2022.2.22
  *  hw.cpp
  *  ver 2.2
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
+
 
 #include <iostream>
 
@@ -20,4 +21,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
