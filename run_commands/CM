@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ~/workspace/cppStudy
+
 rm -rf build
 mkdir build
 cd build
@@ -8,4 +10,11 @@ cmake --build .
 
 exit
 
+chmod 775 CM
+
 rm -rf build && mkdir build && cd build && cmake .. && make && cd ..
+
+printenv | grep LD_LIBRARY_PATH
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/workspace/lib
+
+export LD_LIBRARY_PATH=.

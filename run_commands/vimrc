@@ -19,6 +19,8 @@ set shiftwidth=4
 " set softtabstop=4
 " set expandtab
 
+" set list listchars=tab:▸\ ,eol:↲
+
 " nnoremap <space>. :<c-u>tabedit $MYVIMRC<CR>
 " nnoremap <space>. :<c-u>tabedit ~/.vimrc<CR>
 
