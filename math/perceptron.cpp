@@ -1,5 +1,5 @@
 /*
- *  2020.12.6
+ *  2022.3.6
  *  perceptron.cpp
  *  ver 1.0
  *  Kunihito Mitsuboshi
@@ -65,3 +65,12 @@ int main()
 
 	return 0;
 }
+
+/*                     future work
+ *  20201206 ver 1.0 : normal version
+ *           ver 2.0 : class version
+ *           ver 2.2 : vector is tensor1 version
+ *           ver 3.0 : multi fpn build
+ *           ver 3.4 : adapting to half and quarter
+ *           ver 4.0 : 
+ */
