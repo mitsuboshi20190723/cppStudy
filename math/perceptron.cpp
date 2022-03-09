@@ -1,75 +1,142 @@
 /*
- *  2022.3.6
+ *  2022.3.8
  *  perceptron.cpp
- *  ver 1.0
+ *  ver 2.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
 
 #include <iostream>
+#include <vector>
 
 typedef float IEEE754;
 typedef IEEE754 ieee754;
-typedef ieee754 fpn;
+typedef ieee754 fpn; // multi precision floating point number
 
-
-IEEE754 dot(IEEE754 *v1, IEEE754 *v2, int len)
+fpn dot(int n, std::vector<fpn> a, std::vector<fpn> b)
 {
-	IEEE754 sum = 0.0;
-	for(int i=0; i<len; i++) sum += v1[i] * v2[i];
-	return sum;
+	return n ? dot(n-1, a, b) + a[n] * b[n] : 0.0;
 }
 
-ieee754 step(ieee754 v)
+
+class perceptron
 {
-	return v>0 ? 1 : 0;
+private:
+	IEEE754 step(IEEE754 x);
+	IEEE754 output(IEEE754 x);
+
+public:
+
+	std::vector<fpn> e;
+	std::vector<fpn> w;
+	std::vector<fpn> in;
+	fpn out;
+
+	std::vector<perceptron *> previous;
+	fpn (perceptron::*activation)(fpn);
+	std::vector<perceptron *> next;
+
+	perceptron(){}
+	perceptron(fpn out){this->out = out;}
+
+	void init(fpn e, fpn w, std::vector<perceptron> &x, std::string function);
+	void set_function(std::string function);
+	fpn forward();
+	void train(perceptron t);
+};
+
+
+IEEE754 perceptron::step(IEEE754 x)
+{
+	double y = (double)x > 0.0 ? 1.0 : 0.0;
+	return (IEEE754)y;
 }
 
-fpn forward(fpn *x, fpn *w, int len)
+IEEE754 perceptron::output(IEEE754 x)
 {
-	fpn u = dot(x, w, len);
-	return step(u);
+	return x;
 }
 
-void train(fpn *w, fpn *x, fpn t, fpn e, int len)
+void perceptron::init(fpn e, fpn w, std::vector<perceptron> &x, std::string function)
 {
-	fpn z = forward(x, w, len);
-	for(int i=0; i<len; i++) w[i] += (t-z) * x[i] * e;
+	int n = x.size();
+
+	this->e.resize(n); for(int i=0; i<n; i++) this->e[i] = e;
+	this->w.resize(n); for(int i=0; i<n; i++) this->w[i] = w;
+	this->in.resize(n); for(int i=0; i<n; i++) this->in[i] = 0.0;
+
+	this->previous.resize(n); for(int i=0; i<n; i++) this->previous[i] = &x[i];
+	this->set_function(function);
+}
+
+void perceptron::set_function(std::string function)
+{
+	if(function == "STEP")
+	{
+		std::cout << "step" << std::endl;
+		this->activation = &perceptron::step;
+	}
+	else if(function == "INPUT")
+	{
+		this->activation = nullptr;
+	}
+	else if(function == "OUTPUT")
+	{
+		this->activation = &perceptron::output;
+	}
+}
+
+fpn perceptron::forward()
+{
+	for(int i=0; i<this->in.size(); i++) this->in[i] = this->previous[i]->out;
+	this->out = (this->*activation)(dot(this->w.size(), this->in, this->w));
+
+	return this->out;
+}
+
+void perceptron::train(perceptron t)
+{
+	this->forward();
+	for(int i=0; i<this->w.size(); i++) this->w[i] += (t.out - this->out) * this->previous[i]->out * this->e[i];
 }
 
 
 #define D_NUM 4
 #define W_NUM 3
 
+
+
 int main()
 {
-	fpn e=0.1;
-	fpn w[D_NUM] = {0, 0, 0};
+	std::vector<std::vector<perceptron>> x{{1,0,0}, {1,0,1}, {1,0,1}, {1,1,1}};
+	std::vector<std::vector<perceptron>> t{{0,0,0,1}/* AND */, {0,1,1,1}/* OR */, {0,1,1,0}/* XOR */};
 
-	IEEE754 x[D_NUM][W_NUM] = {{1,0,0}, {1,0,1}, {1,0,1}, {1,1,1}};
 
-//	ieee754 t[D_NUM] = {0, 0, 0, 1}; /* AND */
-//	ieee754 t[D_NUM] = {0, 1, 1, 1}; /* OR */
-	ieee754 t[D_NUM] = {0, 1, 1, 0}; /* XOR */
 
-	int epoch = 10;
+	std::vector<perceptron> inlayer(W_NUM);
+
+	perceptron nn;
+	nn.init(0.1, 0.0, inlayer, "STEP");
+
+
+
+	int tt(2), epoch(10);
+
 	for(int i=0; i<epoch; i++)
 	{
-		std::cout << "epoch : " << i << " ";
-		for(int j=0; j<D_NUM; j++) train(w, x[j], t[j], e, W_NUM);
-		for(int j=0; j<W_NUM; j++) std::cout << "w" << j << ":" << w[j] << " ";
-		std::cout << std::endl;
+		std::cout << "epoch " << i << " : ";
+		for(int j=0; j<D_NUM; j++) {for(int k=0; k<W_NUM; k++) inlayer[k].out = x[j][k].out; nn.train(t[tt][j]);}
+		for(int j=0; j<W_NUM; j++) std::cout << "w" << j << "=" << nn.w[j] << ",   "; std::cout << std::endl;
 	}
-	for(int i=0; i<D_NUM; i++) std::cout << forward(x[i], w, W_NUM) << " ";
-	std::cout << std::endl;
+	for(int i=0; i<D_NUM; i++) {for(int j=0; j<W_NUM; j++) inlayer[j].out = x[i][j].out; std::cout << nn.forward() << " ";} std::cout << std::endl;
 
 	return 0;
 }
 
 /*                     future work
  *  20201206 ver 1.0 : normal version
- *           ver 2.0 : class version
- *           ver 2.2 : vector is tensor1 version
+ *  20220308 ver 2.0 : class version
+ *           ver 2.2 : vector is tensor1 version, lambda
  *           ver 3.0 : multi fpn build
  *           ver 3.4 : adapting to half and quarter
  *           ver 4.0 : 
