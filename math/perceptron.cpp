@@ -1,7 +1,7 @@
 /*
  *  2022.3.12
  *  perceptron.cpp
- *  ver 2.2
+ *  ver 2.3
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -10,9 +10,9 @@
 #include <vector>
 #include <cmath>
 
-typedef float IEEE754;
-typedef IEEE754 ieee754;
-typedef ieee754 fpn; // multi precision floating point number
+typedef float fpn; // multi precision floating point number
+typedef fpn ieee754;
+typedef fpn IEEE754;
 
 
 fpn recursive_dot(int n, std::vector<fpn> a, std::vector<fpn> b)
@@ -140,11 +140,15 @@ int main()
 
 	for(int i=0; i<epoch; i++)
 	{
-		std::cout << "epoch " << i << " : ";
 		for(int j=0; j<D_NUM; j++) train(nn, x[j], t[teaching_set][j]);
-		for(int j=0; j<W_NUM; j++) std::cout << "w" << j << "=" << nn.w[j] << ",   "; std::cout << std::endl;
+		std::cout << "epoch " << i << " : "; for(int j=0; j<W_NUM; j++) std::cout << "w" << j << "=" << nn.w[j] << ",    "; std::cout << std::endl;
 	}
-	for(int i=0; i<D_NUM; i++) std::cout << forward(nn, x[i]) << " "; std::cout << std::endl;
+
+	std::cout << std::endl << "--------  result  --------" << std::endl;
+	std::cout << "activation function : " << activation_function_name << std::endl;
+	if(activation_function_name != "STEP") std::cout << "Warnung! Not support activation function." << std::endl;
+	std::cout << "teaching : "; for(int i=0; i<D_NUM; i++) std::cout << t[teaching_set][i].out << ",    "; std::cout << std::endl;
+	std::cout << "p-output : "; for(int i=0; i<D_NUM; i++) std::cout << forward(nn, x[i]) << ",    "; std::cout << std::endl;
 
 	return 0;
 }
