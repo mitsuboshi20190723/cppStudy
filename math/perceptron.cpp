@@ -1,7 +1,7 @@
 /*
- *  2022.3.12
+ *  2022.3.20
  *  perceptron.cpp
- *  ver 2.3
+ *  ver 3.1
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -9,16 +9,27 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include "ncthalf.hpp"
 
-typedef float fpn; // multi precision floating point number
-typedef fpn ieee754;
-typedef fpn IEEE754;
+#ifdef LONG_DOUBLE
+typedef long double fpn;
+#elif DOUBLE
+typedef double fpn;
+#elif FLOAT
+typedef float fpn;
+#elif HALF
+typedef half fpn;
+#elif QUARTER
+typedef quarter fpn;
+#else
+typedef float fpn;
+#endif
+typedef fpn ieee754, IEEE754, mpfpn; // multi precision floating point number
 
-
-fpn recursive_dot(int n, std::vector<fpn> a, std::vector<fpn> b)
-{
-	return n ? recursive_dot(n-1, a, b) + a[n] * b[n] : 0.0;
-}
+//fpn recursive_dot(int n, std::vector<fpn> a, std::vector<fpn> b)
+//{
+//	return n ? recursive_dot(n-1, a, b) + a[n] * b[n] : 0.0;
+//}
 
 auto lambda_dot = [](int n, std::vector<fpn> a, std::vector<fpn> b)
 {
@@ -31,7 +42,7 @@ class perceptron
 {
 private:
 	IEEE754 step(IEEE754 x){double y = (double)(x > 0.0 ? 1.0 : 0.0); return (IEEE754)y;}
-	IEEE754 relu(IEEE754 x){double y = (double)(x > 0.0 ? x : 0.0); return (IEEE754)y;}
+//	IEEE754 relu(IEEE754 x){double y = (double)(x > 0.0 ? x : 0.0); return (IEEE754)y;}
 	IEEE754 sigmoid(IEEE754 x){return (IEEE754)(1 / (1 + exp((double)x)) );}
 	IEEE754 tan_h(IEEE754 x){return (IEEE754)tanh((double)x);}
 	IEEE754 input(IEEE754 x){return (IEEE754)1.0;}
@@ -71,7 +82,7 @@ void perceptron::init(fpn lr, fpn w, std::vector<perceptron> &x, std::vector<per
 void perceptron::set_function(std::string fn)
 {
 	     if(fn == "STEP") this->activation = &perceptron::step;
-	else if(fn == "RELU") this->activation = &perceptron::relu;
+//	else if(fn == "RELU") this->activation = &perceptron::relu;
 	else if(fn == "SIGMOID") this->activation = &perceptron::sigmoid;
 	else if(fn == "TANH") this->activation = &perceptron::tan_h;
 	else if(fn == "INPUT") this->activation = &perceptron::input;
@@ -121,9 +132,11 @@ void train(perceptron &nn, std::vector<perceptron> &x, perceptron &t)
 
 int main()
 {
-	tensor2 x{{1,0,0}, {1,0,1}, {1,0,1}, {1,1,1}};
-	tensor2 t{{0,0,0,1}/* AND */, {0,1,1,1}/* OR */, {0,1,1,0}/* XOR */};
+//	tensor2 x{{1,0,0}, {1,0,1}, {1,0,1}, {1,1,1}};
+//	tensor2 t{{0,0,0,1}/* AND */, {0,1,1,1}/* OR */, {0,1,1,0}/* XOR */};
 
+	tensor2 x{{(fpn)1,(fpn)0,(fpn)0}, {(fpn)1,(fpn)0,(fpn)1}, {(fpn)1,(fpn)0,(fpn)1}, {(fpn)1,(fpn)1,(fpn)1}};
+	tensor2 t{{(fpn)0,(fpn)0,(fpn)0,(fpn)1}/* AND */, {(fpn)0,(fpn)1,(fpn)1,(fpn)1}/* OR */, {(fpn)0,(fpn)1,(fpn)1,(fpn)0}/* XOR */};
 
 	tensor1 in_layer(W_NUM);
 	tensor0 out_layer(1);
@@ -152,12 +165,3 @@ int main()
 
 	return 0;
 }
-
-/*                     future work
- *  20201206 ver 1.0 : normal version
- *  20220308 ver 2.0 : class version
- *  20220312 ver 2.2 : vector is tensor1 version, lambda
- *           ver 3.0 : multi fpn build
- *           ver 3.4 : adapting to half and quarter
- *           ver 4.0 : 
- */
