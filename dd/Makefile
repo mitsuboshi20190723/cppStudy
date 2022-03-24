@@ -1,6 +1,6 @@
-obj-m := kmod.o
+obj-m := mymod.o
 
-kmod.ko: kmod.c
+mymod.ko: mymod.c
 	make -C /usr/src/linux-headers-`uname -r` M=`pwd` V=1 modules
 
 clean:

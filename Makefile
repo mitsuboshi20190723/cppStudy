@@ -4,7 +4,7 @@ mkdirbuild	:
 	mkdir build && echo "make hw or make ffer or make gauss or make kservo or make joynics or make perceptron or make fd"
 
 hw	: hello_world/hw.c
-	gcc -o $(BUILD)/HW hello_world/hw.c
+	gcc -o $(BUILD)/HW hello_world/hw.c -w
 
 gauss	: math/gauss.c
 	gcc math/gauss.c -o $(BUILD)/GAUSS -lm
