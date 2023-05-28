@@ -15,7 +15,7 @@
  * for openCV 4.5
  */
 
-// g++ -o webcam webcam.cpp `pkg-config --cflags --libs opencv `
+// g++ -o webcam webcam.cpp `pkg-config --cflags --libs opencv4 `
 
 #include <iostream>
 #include <vector>
@@ -26,7 +26,6 @@
 
 int main(int argc, char **argv)
 {
-	cv::VideoCapture cap(0);
 	int t, fourcc;
 	double w, h, f;
 	cv::CascadeClassifier cascade;
@@ -35,8 +34,9 @@ int main(int argc, char **argv)
 	std::vector<cv::Rect> faces;
 	cv::Rect face;
 	cv::VideoWriter writer;
-	std::string filepath = "/home/pi/video.mp4";
+	std::string filepath = "video.mp4";
 
+	cv::VideoCapture cap(0);
 	if(!cap.isOpened()) return -1;
 
 	w = cap.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -45,17 +45,20 @@ int main(int argc, char **argv)
 	t = cap.get(cv::CAP_PROP_FORMAT);
 	std::cout << "w=" << w << ",h=" << h << ",fps=" << f << std::endl;
 	std::cout << "FORMAT=" << t << std::endl;
+/*
 	cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
 	cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 	cap.set(cv::CAP_PROP_FPS, 30);
 	cap.set(cv::CAP_PROP_FORMAT, 2);
+*/
 
 	cascade.load("/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml");
 //	cascade.load("/usr/local/share/opencv4/haarcascades/haarcascade_frontalcatface.xml");
 
 	fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
 	wh = cv::Size((int)w, (int)h);
-	if(!writer.open(filepath, fourcc, f, wh)) return -1;
+	writer.open(filepath, fourcc, f, wh);
+	if(!writer.isOpened()) return -1;
 
 
 //	cv::namedWindow("camera", cv::WINDOW_AUTOSIZE);
