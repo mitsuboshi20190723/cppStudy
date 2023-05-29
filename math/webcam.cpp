@@ -1,7 +1,7 @@
 /*
- *  2023.5.28
+ *  2023.5.29
  *  webcam.cpp
- *  ver 1.8
+ *  ver 1.8.9
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 
@@ -34,7 +35,7 @@ int main(int argc, char **argv)
 	std::vector<cv::Rect> faces;
 	cv::Rect face;
 	cv::VideoWriter writer;
-	std::string filepath = "video.mp4";
+	std::string filepath = "video.mp4", title;
 
 	cv::VideoCapture cap(0);
 	if(!cap.isOpened()) return -1;
@@ -45,12 +46,12 @@ int main(int argc, char **argv)
 	t = cap.get(cv::CAP_PROP_FORMAT);
 	std::cout << "w=" << w << ",h=" << h << ",fps=" << f << std::endl;
 	std::cout << "FORMAT=" << t << std::endl;
-/*
+
 	cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
 	cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 	cap.set(cv::CAP_PROP_FPS, 30);
 	cap.set(cv::CAP_PROP_FORMAT, 2);
-*/
+
 
 	cascade.load("/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml");
 //	cascade.load("/usr/local/share/opencv4/haarcascades/haarcascade_frontalcatface.xml");
@@ -62,14 +63,15 @@ int main(int argc, char **argv)
 
 
 //	cv::namedWindow("camera", cv::WINDOW_AUTOSIZE);
-	for(;;)
+	for(int cnt=0; ; cnt++)
 	{
 		cap >> img;
 
 		cascade.detectMultiScale(img, faces, 1.1, 3, 0, cv::Size(50, 50));
 		for(int i=0; i<faces.size(); i++) cv::rectangle(img, cv::Point(faces[i].x, faces[i].y), cv::Point(faces[i].x+faces[i].width, faces[i].y+faces[i].height), cv::Scalar(0,0,255), 3);
 
-		cv::imshow("camera", img);
+		title = std::to_string(f) + " fps,  " + std::to_string(cnt) + " frame";
+		cv::imshow(title, img);
 		
 		writer << img;
 
@@ -78,6 +80,8 @@ int main(int argc, char **argv)
 		if(key == 'q') break; // 113
 	}
 	cv::destroyAllWindows();
+	writer.release();
+	cap.release();
 
 	return 0;
 }
