@@ -1,7 +1,7 @@
 /*
- *  2020.12.20
+ *  2023.11.14
  *  kservo.c
- *  ver 2.0
+ *  ver.3.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -16,39 +16,42 @@
 #include <termios.h>
 
 
-unsigned char P7500[] = {0x81, 0x3A, 0x4C};
-unsigned char P3968[] = {0x81, 0x1F, 0x00};
+unsigned char GETID[] = {0xFF, 0x00, 0x00, 0x00};
+unsigned char SETID[] = {0xE0, 0x01, 0x01, 0x01};
+unsigned char P7500[] = {0x80, 0x3A, 0x4C};
 
-int set_pos(int dev, char id, double deg)
+
+unsigned char buff[128];
+
+
+int set_pos(int dev, unsigned char id, double deg)
 {
 	int pos, tx_len=3;
 	int i, rx_len;
-	unsigned char buf[10], *cmd, *pos_h, *pos_l;
+	unsigned char *cmd, *pos_h, *pos_l;
 
 	if(deg > 135 || deg < -135) return 0;
-
-	cmd = buf; 
-	*cmd = 0x80 | id;
-
 	pos = (int)(deg / 0.034) + 7500;
 
-	pos_h = buf + 1;
+	for(i=0; i<128; i++) buff[i] ^= buff[i];
+	cmd = buff;
+	*cmd = 0x80 | id;
+
+	pos_h = buff + 1;
 	*pos_h = (unsigned char)(pos/128 & 127);
-	pos_l = buf + 2;
+	pos_l = buff + 2;
 	*pos_l = (unsigned char)(pos & 127);
 
-	printf("TX : "); for(i = 0; i < tx_len; i++) printf("%02X ", buf[i]); printf("\n");
-	write(dev, buf, tx_len);
+	printf("TX : "); for(i=0; i < tx_len; i++) printf("%02X ", buff[i]); printf("\n");
+	write(dev, buff, tx_len);
 
 //	usleep(0.1*1000*1000);
-
-	rx_len = read(dev, buf, sizeof(buf));
+	for(i=0; i<128; i++) buff[i] ^= buff[i];
+	rx_len = read(dev, buff, sizeof(buff));
 	if(0 < rx_len)
 	{
-		pos = (int)buf[4] * 128 + buf[5];
-		printf("RX : ");
-		for(i = 0; i < rx_len; i++) printf("%02X ", buf[i]);
-		printf("\n");
+		pos = (int)buff[4] * 128 + (int)buff[5];
+		printf("RX : "); for(i=0; i < rx_len; i++) printf("%02X ", buff[i]); printf("\n");
 	}
 	else pos = -1;
 
@@ -62,7 +65,8 @@ int main(int argc, char *argv[])
 
 
 	fd = open("/dev/ttyUSB0", O_RDWR);
-	if (fd < 0) {
+	if (fd < 0)
+	{
 		printf("Do not open /dev/ttyUSB0\n");
 		return -1;
 	}
@@ -79,9 +83,8 @@ int main(int argc, char *argv[])
 
 
 	write(fd, P7500, 3);
-	sleep(1);
-	write(fd, P3968, 3);
-	usleep(1*1000*1000);
+	sleep(0.5);
+	usleep(0.5*1000*1000);
 
 	set_pos(fd, 1, 0);
 	sleep(1);
