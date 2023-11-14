@@ -1,5 +1,5 @@
 /*
- *  2023.11.14
+ *  2023.11.15
  *  kservo.c
  *  ver.3.0
  *  Kunihito Mitsuboshi
@@ -24,6 +24,61 @@ unsigned char P7500[] = {0x80, 0x3A, 0x4C};
 unsigned char buff[128];
 
 
+int get_id(int dev)
+{
+	int id, tx_len=4;
+	int i, rx_len;
+
+	for(i=0; i<128; i++) buff[i] ^= buff[i];
+	for(i=0; i < tx_len; i++) buff[i] = GETID[i];
+
+	printf("TX : "); for(i=0; i < tx_len; i++) printf("%02X ", buff[i]); printf("\n");
+	write(dev, buff, tx_len);
+
+	usleep(0.5*1000*1000);
+	for(i=0; i<128; i++) buff[i] ^= buff[i];
+
+	rx_len = read(dev, buff, sizeof(buff));
+	if(0 < rx_len)
+	{
+		id = (int)buff[4] % 32;
+		printf("RX : "); for(i=0; i < rx_len; i++) printf("%02X ", buff[i]); printf("\n");
+		printf("ID%d found.\n", id);
+	}
+
+	return id;
+}
+
+int set_id(int dev, unsigned char req_id)
+{
+	int res_id, tx_len=4;
+	int i, rx_len;
+
+	if(req_id > 31 || req_id < 0) return -1;
+
+	for(i=0; i<128; i++) buff[i] ^= buff[i];
+	for(i=0; i < tx_len; i++) buff[i] = SETID[i];
+	*buff = *buff | req_id;	
+
+	printf("TX : "); for(i=0; i < tx_len; i++) printf("%02X ", buff[i]); printf("\n");
+	write(dev, buff, tx_len);
+
+	usleep(0.5*1000*1000);
+	for(i=0; i<128; i++) buff[i] ^= buff[i];
+
+	rx_len = read(dev, buff, sizeof(buff));
+	if(0 < rx_len)
+	{
+		res_id = (int)buff[4] % 32;
+		printf("RX : "); for(i=0; i < rx_len; i++) printf("%02X ", buff[i]); printf("\n");
+		if(res_id == req_id) printf("ID changed.\n");
+		else return -1;
+	}
+	else return -1;
+
+	return res_id;
+}
+
 int set_pos(int dev, unsigned char id, double deg)
 {
 	int pos, tx_len=3;
@@ -35,7 +90,7 @@ int set_pos(int dev, unsigned char id, double deg)
 
 	for(i=0; i<128; i++) buff[i] ^= buff[i];
 	cmd = buff;
-	*cmd = 0x80 | id;
+	*cmd = *P7500 | id;
 
 	pos_h = buff + 1;
 	*pos_h = (unsigned char)(pos/128 & 127);
@@ -60,7 +115,8 @@ int set_pos(int dev, unsigned char id, double deg)
 
 int main(int argc, char *argv[])
 {
-	int fd;
+	int fd, n;
+	unsigned char id = 3; /* id = 19 */
 	struct termios tio;
 
 
@@ -82,15 +138,15 @@ int main(int argc, char *argv[])
 	// ioctl(fd, TCSETS, &tio);
 
 
-	write(fd, P7500, 3);
+	n = get_id(fd);
 	sleep(0.5);
-	usleep(0.5*1000*1000);
+	if(n != (int)id) {set_id(fd, id); sleep(5);}
 
-	set_pos(fd, 1, 0);
+	set_pos(fd, id, 90);
 	sleep(1);
-	set_pos(fd, 1, 90);
+	set_pos(fd, id, -90);
 	usleep(1*1000*1000);
-	set_pos(fd, 1, 0);
+	set_pos(fd, id, 0);
 
 	close(fd);
 	return 0;
