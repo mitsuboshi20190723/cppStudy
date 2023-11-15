@@ -1,13 +1,14 @@
 /*
  *  2023.11.15
  *  kservo.c
- *  ver.3.0
+ *  ver.3.1
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
 
 
 #include <stdio.h>
+#include <stdlib.h>
 // #include <sys/types.h>
 // #include <sys/stat.h>
 // #include <sys/ioctl.h>
@@ -19,7 +20,6 @@
 unsigned char GETID[] = {0xFF, 0x00, 0x00, 0x00};
 unsigned char SETID[] = {0xE0, 0x01, 0x01, 0x01};
 unsigned char P7500[] = {0x80, 0x3A, 0x4C};
-
 
 unsigned char buff[128];
 
@@ -43,7 +43,7 @@ int get_id(int dev)
 	{
 		id = (int)buff[4] % 32;
 		printf("RX : "); for(i=0; i < rx_len; i++) printf("%02X ", buff[i]); printf("\n");
-		printf("ID%d found.\n", id);
+		printf("ID=%d servo found.\n", id);
 	}
 
 	return id;
@@ -115,17 +115,37 @@ int set_pos(int dev, unsigned char id, double deg)
 
 int main(int argc, char *argv[])
 {
-	int fd, n;
-	unsigned char id = 3; /* id = 19 */
+	int i, fd, n;
+	char str[5];
+	unsigned char id = 32;
+	double deg = 90.0;
 	struct termios tio;
 
+	for(i=0; i<argc; i++)
+	{
+		if(argv[i][0] == '-')
+		{
+			if((i+1)<argc)
+			{
+				if(argv[i][1] == 'i')
+				{
+					n = atoi(argv[i+1]);
+					if(n >= 0 && n<32) id = (unsigned char)n;
+					else exit(0);
+				}
+				else if(argv[i][1] == 'd')
+				{
+					deg = atof(argv[i+1]);
+					if(135<deg || deg<-135) exit(0);
+				}
+				i++;
+			}
+			else exit(0);
+		}
+	}
 
 	fd = open("/dev/ttyUSB0", O_RDWR);
-	if (fd < 0)
-	{
-		printf("Do not open /dev/ttyUSB0\n");
-		return -1;
-	}
+	if (fd < 0) { printf("Do not open /dev/ttyUSB0\n"); return -1; }
 
 	tio.c_iflag = tio.c_oflag = tio.c_lflag = 0;
 	tio.c_cflag = B115200 | CLOCAL | PARENB | CREAD | CS8;
@@ -138,15 +158,22 @@ int main(int argc, char *argv[])
 	// ioctl(fd, TCSETS, &tio);
 
 
-	n = get_id(fd);
-	sleep(0.5);
-	if(n != (int)id) {set_id(fd, id); sleep(5);}
+	n = get_id(fd); sleep(0.5);
+	if(id > 31) id = (unsigned char)n;
 
-	set_pos(fd, id, 90);
-	sleep(1);
-	set_pos(fd, id, -90);
-	usleep(1*1000*1000);
-	set_pos(fd, id, 0);
+	if(n != (int)id)
+	{
+		scanf("Cange ID ? [yes / no] > %s", str);
+		if(str[0] == 'y' || str[0] == 'Y')
+		{
+			set_id(fd, id); sleep(5);
+		}
+		else id = (unsigned char)n;
+	}
+
+	set_pos(fd, id, deg); sleep(1);
+	set_pos(fd, id, -deg); sleep(1);
+	set_pos(fd, id, 0); sleep(1);
 
 	close(fd);
 	return 0;
