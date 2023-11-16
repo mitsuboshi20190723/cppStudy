@@ -1,7 +1,7 @@
 /*
- *  2023.5.30
+ *  2023.11.16
  *  webcam.cpp
- *  ver 2.0
+ *  ver.2.2
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -25,6 +25,10 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 
+#define PATH4CAP "/dev/video0"
+#define PATH4CASCADE "/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
+//                   "/usr/local/share/opencv4/haarcascades/haarcascade_frontalcatface.xml"
+
 //using namespace cv;
 
 int main(int argc, char **argv)
@@ -37,10 +41,11 @@ int main(int argc, char **argv)
 	cv::Size wh;
 	std::vector<cv::Rect> faces;
 	cv::Rect face;
+	cv::Point left_up, right_down;
 	cv::VideoWriter writer;
 	std::string filepath = "video.mp4", str;
 
-	cv::VideoCapture cap(0);
+	cv::VideoCapture cap(PATH4CAP);
 	if(!cap.isOpened()) return -1;
 
 	w = cap.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -56,8 +61,7 @@ int main(int argc, char **argv)
 //	cap.set(cv::CAP_PROP_FORMAT, 16);
 
 
-	cascade.load("/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml");
-//	cascade.load("/usr/local/share/opencv4/haarcascades/haarcascade_frontalcatface.xml");
+	cascade.load(PATH4CASCADE);
 
 	fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
 	wh = cv::Size((int)w, (int)h);
@@ -73,8 +77,13 @@ int main(int argc, char **argv)
 		writer << img;
 
 		cascade.detectMultiScale(img, faces, 1.1, 3, 0, cv::Size(50, 50));
-		for(int i=0; i<faces.size(); i++) cv::rectangle(img, cv::Point(faces[i].x, faces[i].y), cv::Point(faces[i].x+faces[i].width, faces[i].y+faces[i].height), cv::Scalar(0,0,255), 3);
 
+		for(int i=0; i<faces.size(); i++)
+		{
+			left_up = cv::Point(faces[i].x, faces[i].y);
+			right_down = cv::Point(faces[i].x+faces[i].width, faces[i].y+faces[i].height);
+			cv::rectangle(img, left_up, right_down, cv::Scalar(0,0,255), 3);
+		}
 		str = "frame counter : " + std::to_string(cnt);
 		cv::putText(img, str, cv::Point(10,22), 1, 1.0, cv::Scalar(0,255,0));
 		e = std::chrono::system_clock::now();
@@ -82,7 +91,7 @@ int main(int argc, char **argv)
 		str = "passed " + std::to_string((float)d/1000000) + " seconds";
 		cv::putText(img, str, cv::Point(330,22), 1, 1.0, cv::Scalar(255,255,255));
 
-		cv::imshow("webcamera (q : quit)", img);
+		cv::imshow("webcamera ( q : quit )", img);
 
 //		if(cv::waitKey(30) >= 0) break;
 		const int key = cv::waitKey(1);
@@ -90,6 +99,7 @@ int main(int argc, char **argv)
 		
 //		std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000/f)));
 	}
+	
 	cv::destroyAllWindows();
 	writer.release();
 	cap.release();
