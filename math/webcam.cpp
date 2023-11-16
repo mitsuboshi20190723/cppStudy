@@ -1,5 +1,5 @@
 /*
- *  2023.11.16
+ *  2023.11.17
  *  webcam.cpp
  *  ver.2.2
  *  Kunihito Mitsuboshi
@@ -15,7 +15,7 @@
  * for openCV 4.5
  */
 
-// g++ -o webcam webcam.cpp `pkg-config --cflags --libs opencv4 `
+// g++ -o webcam webcam.cpp `pkg-config --cflags --libs opencv4`
 
 #include <iostream>
 #include <vector>
@@ -25,11 +25,10 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 
-#define PATH4CAP "/dev/video0"
+#define PATH4CAPTURE "/dev/video0"
 #define PATH4CASCADE "/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
 //                   "/usr/local/share/opencv4/haarcascades/haarcascade_frontalcatface.xml"
 
-//using namespace cv;
 
 int main(int argc, char **argv)
 {
@@ -40,12 +39,11 @@ int main(int argc, char **argv)
 	cv::Mat img;
 	cv::Size wh;
 	std::vector<cv::Rect> faces;
-	cv::Rect face;
 	cv::Point left_up, right_down;
 	cv::VideoWriter writer;
 	std::string filepath = "video.mp4", str;
 
-	cv::VideoCapture cap(PATH4CAP);
+	cv::VideoCapture cap(PATH4CAPTURE);
 	if(!cap.isOpened()) return -1;
 
 	w = cap.get(cv::CAP_PROP_FRAME_WIDTH);
