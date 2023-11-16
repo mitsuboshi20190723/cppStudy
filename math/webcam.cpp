@@ -26,21 +26,22 @@
 #include <opencv2/highgui.hpp>
 
 #define PATH4CAPTURE "/dev/video0"
-#define PATH4CASCADE "/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
-//                   "/usr/local/share/opencv4/haarcascades/haarcascade_frontalcatface.xml"
+#define PATH4CASCADE "/usr/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
+//                   "/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
+//                        ^^^^^^
 
 
 int main(int argc, char **argv)
 {
 	int t, fourcc, d;
 	double w, h, f;
+	cv::Mat img;
 	std::chrono::system_clock::time_point s, e;
 	cv::CascadeClassifier cascade;
-	cv::Mat img;
-	cv::Size wh;
 	std::vector<cv::Rect> faces;
 	cv::Point left_up, right_down;
 	cv::VideoWriter writer;
+	cv::Size wh;
 	std::string filepath = "video.mp4", str;
 
 	cv::VideoCapture cap(PATH4CAPTURE);
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
 		str = "passed " + std::to_string((float)d/1000000) + " seconds";
 		cv::putText(img, str, cv::Point(330,22), 1, 1.0, cv::Scalar(255,255,255));
 
-		cv::imshow("webcamera ( q : quit )", img);
+		cv::imshow("webcamera  ( q : quit )", img);
 
 //		if(cv::waitKey(30) >= 0) break;
 		const int key = cv::waitKey(1);
