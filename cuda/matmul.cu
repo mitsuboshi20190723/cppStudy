@@ -1,7 +1,7 @@
 /*
- *  2022.2.20
+ *  2023.11.19
  *  matmul.cu
- *  ver 0.6
+ *  ver.0.7
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -32,7 +32,6 @@ __global__ void mat_mul_0(matrix a, matrix b, matrix c)
 	c.mat[row*c.col+col] = sum;
 
 	printf("row=%d, col=%d : %f\n", row, col, sum);
-//error	std::cout << "row=" << row << ", col=" << col << " : " << sum << std::endl;
 }
 
 #define INNER_PRODUCT c.mat[row*c.col+col]=0; for(int i=0; i<a.col; i++) c.mat[row*c.col+col] += a.mat[row*a.col+i] * b.mat[i*b.row+col];
@@ -81,7 +80,7 @@ void get_matrix(matrix m)
 
 int chk_arg(int argc, char **argv, int *r, int *d, int *c, int *gpu, int *cpu, int *print)
 {
-	int count = 0;
+	int count = 0, num = 0;
 
 	for(int i=1; i<argc; i++)
 	{
@@ -105,19 +104,28 @@ int chk_arg(int argc, char **argv, int *r, int *d, int *c, int *gpu, int *cpu, i
 		}
 		else
 		{
-			switch( count )
-			{
-			case 0:
-				*r = atoi(argv[i]);
-				break;
-			case 1:
-				*d = atoi(argv[i]);
-				break;
-			case 2:
-				*c = atoi(argv[i]);
-				break;
+			num = atoi(argv[i]);
+			if(num > 0)
+			{ 
+				switch( count )
+				{
+				case 0:
+					*r = atoi(argv[i]);
+					break;
+				case 1:
+					*d = atoi(argv[i]);
+					break;
+				case 2:
+					*c = atoi(argv[i]);
+					break;
+				}
+				count++;
 			}
-			count++;
+			else
+			{
+				std::cout << "-" << argv[i] << " is but number." << std::endl;
+				exit(0);
+			}
 		}
 	}
 	return count;
@@ -125,8 +133,8 @@ int chk_arg(int argc, char **argv, int *r, int *d, int *c, int *gpu, int *cpu, i
 
 int main(int argc, char **argv)
 {
-	matrix d_a, d_b, d_c;
-	matrix a, b, c;
+	matrix a, b, c; /* for CPU */
+	matrix d_a, d_b, d_c; /* for GPU */
 	int R(1), D(1), C(1), GPU(1), CPU(1), PRINT(0);
 
 	chk_arg(argc, argv, &R, &D, &C, &GPU, &CPU, &PRINT);
@@ -159,7 +167,6 @@ int main(int argc, char **argv)
 TIMER_START
 		cudaMemcpy(d_a.mat, a.mat, a.row*a.col*sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(d_b.mat, b.mat, b.row*b.col*sizeof(float), cudaMemcpyHostToDevice);
-//error	mat_mul_0<<<int numBlocks(1), dim3 threadsPerBlock(2, 2)>>>(d_a, d_b, d_c);
 		dim3 BPG(1, 1); dim3 TPB(R, C); mat_mul_gpu<<<BPG, TPB>>>(d_a, d_b, d_c);
 		cudaMemcpy(c.mat, d_c.mat, d_c.row*d_c.col*sizeof(float), cudaMemcpyDeviceToHost);
 TIMER_STOP
