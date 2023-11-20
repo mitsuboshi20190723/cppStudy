@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(cppStudy)
 
 find_package(OpenCV REQUIRED)
-#find_package(CUDA REQUIRED)
+find_package(CUDA REQUIRED)
 
 
 add_executable(hw hello_world/hw.cpp)
@@ -53,5 +53,6 @@ if(CUDA_FOUND)
 
 
     cuda_add_executable(matmul cuda/matmul.cu)
+    cuda_add_executable(hfd cuda/hfd.cu)
 
 endif(CUDA_FOUND)
