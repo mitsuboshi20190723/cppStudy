@@ -1,7 +1,7 @@
 /*
- *  2023.11.19
+ *  2023.11.21
  *  matmul.cu
- *  ver.0.7
+ *  ver.0.8
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -98,7 +98,7 @@ int chk_arg(int argc, char **argv, int *r, int *d, int *c, int *gpu, int *cpu, i
 				*print = 1;
 				break;
 			default:
-				std::cout << "-" << argv[i][1] << " : unknown option." << std::endl;
+				std::cout << "-" << argv[i][1] << " is unknown option." << std::endl;
 				exit(0);
 			}
 		}
@@ -123,7 +123,7 @@ int chk_arg(int argc, char **argv, int *r, int *d, int *c, int *gpu, int *cpu, i
 			}
 			else
 			{
-				std::cout << "-" << argv[i] << " is but number." << std::endl;
+				std::cout << argv[i] << " is but number." << std::endl;
 				exit(0);
 			}
 		}

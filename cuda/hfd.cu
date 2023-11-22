@@ -1,5 +1,5 @@
 /*
- *  2023.11.19
+ *  2023.11.21
  *  hfd.cu
  *  ver.0.5
  *  Kunihito Mitsuboshi
@@ -40,7 +40,7 @@ void sum(std::vector<half> v)
 
 int main(int argc, char **argv)
 {
-//	int i, *gpu;
+	int *gpu;
 	long l, len(10000);
 	
 	half h; std::vector<half> vh(len,1);
@@ -79,18 +79,16 @@ TIMER_STOP
 	std::cout << std::endl;
 
 
+	cudaMalloc((void**)&gpu, len*sizeof(double));
 /*
-	cudaMalloc((void**)gpu, len*sizeof(double));
-
 	cudaMemcpy(gpu, vd, len*sizeof(double), cudaMemcpyHostToDevice);
 
 //error	but_sum_gpu<<<int numBlocks(1), dim3 threadsPerBlock(2, 2)>>>(gpu, ans); inisialize in <<< >>>>.
 	dim3 BPG(1, 1); dim3 TPB(R, C); but_sum_gpu<<<BPG, TPB>>>(gpu, ans);
 
 	cudaMemcpy(vd, gpu, len*sizeof(double), cudaMemcpyDeviceToHost);
-
-	cudaFree(gpu);
 */
+	cudaFree(gpu);
 
 	return 0;
 }

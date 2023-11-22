@@ -1,7 +1,7 @@
 /*
- *  2023.11.20
+ *  2023.11.22
  *  timer.h
- *  ver.2.0
+ *  ver.2.2
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -18,8 +18,7 @@ extern "C" {
 #include <stdio.h>
 #include <time.h>
 
-
-struct timespec ___start, ___end;
+struct timespec ___start={0,0}, ___end;
 
 #define ___TIME_TAKEN \
 	___end.tv_sec - ___start.tv_sec, \
