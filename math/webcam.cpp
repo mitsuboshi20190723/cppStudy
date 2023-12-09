@@ -1,7 +1,7 @@
 /*
- *  2023.11.17
+ *  2023.12.10
  *  webcam.cpp
- *  ver.2.2
+ *  ver.2.5
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -15,7 +15,8 @@
  * for openCV 4.5
  */
 
-// g++ -o webcam webcam.cpp `pkg-config --cflags --libs opencv4`
+// g++ -o WEBCAM webcam.cpp `pkg-config --cflags --libs opencv4`
+// WEBCAM /dev/video0 /usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml ./video.mp4
 
 #include <iostream>
 #include <vector>
@@ -25,47 +26,99 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 
+
 #define PATH4CAPTURE "/dev/video0"
-#define PATH4CASCADE "/usr/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
-//                   "/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
-//                        ^^^^^^
+#define PATH4CASCADE "/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml"
+#define PATH4MP4FILE "./video.mp4"
 
 
 int main(int argc, char **argv)
 {
-	int t, fourcc, d;
-	double w, h, f;
-	cv::Mat img;
+	char stat, default_dev[] = "/dev/video0";
+	int d;
 	std::chrono::system_clock::time_point s, e;
+
+	char *path4capture;
+	int t;
+	double w, h, f;
+	cv::VideoCapture cap;
+	cv::Mat img;
+
+	char *path4cascade;
 	cv::CascadeClassifier cascade;
 	std::vector<cv::Rect> faces;
 	cv::Point left_up, right_down;
+	std::string str;
+
+	char *path4mp4file;
+	int fourcc;
 	cv::VideoWriter writer;
 	cv::Size wh;
-	std::string filepath = "video.mp4", str;
 
-	cv::VideoCapture cap(PATH4CAPTURE);
+
+	if(argc == 1)
+	{
+		std::cout << "For example command." << std::endl;
+		std::cout << argv[0] << " " << PATH4CAPTURE
+		       	             << " " << PATH4CASCADE
+				     << " " << PATH4MP4FILE << std::endl;
+		return 0;
+	}
+	stat = 0;
+	for(int cnt=1; cnt < argc; cnt++)
+	{
+		if(std::string(argv[cnt]).find("/dev") != std::string::npos)
+		{
+			stat += 1;
+			path4capture = argv[cnt];
+			std::cout << "Camera device : " << path4capture << std::endl;
+
+		}
+		if(std::string(argv[cnt]).find(".xml") != std::string::npos)
+                {
+                        stat += 2;
+                        path4cascade = argv[cnt];
+                        std::cout << "Cascade file  : " << path4cascade << std::endl;
+
+                }
+		if(std::string(argv[cnt]).find(".mp4") != std::string::npos)
+                {
+                        stat += 4;
+                        path4mp4file = argv[cnt];
+                        std::cout << "For REC file  : " << path4mp4file << std::endl;
+
+                }
+	}
+
+
+	if(!(stat & 1)) path4capture = default_dev;
+	cap = cv::VideoCapture(path4capture);
 	if(!cap.isOpened()) return -1;
 
 	w = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 	h = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 	f = cap.get(cv::CAP_PROP_FPS);
 	t = cap.get(cv::CAP_PROP_FORMAT);
-	std::cout << "w=" << w << ",h=" << h << ",fps=" << f << std::endl;
+	std::cout << "w=" << w << ", h=" << h << ", fps=" << f << std::endl;
 	std::cout << "FORMAT=" << t << std::endl;
 
 	cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
 	cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 	cap.set(cv::CAP_PROP_FPS, 30);
-//	cap.set(cv::CAP_PROP_FORMAT, 16);
+	cap.set(cv::CAP_PROP_FORMAT, 16);
 
 
-	cascade.load(PATH4CASCADE);
+	if(stat & 2) if(!cascade.load(path4cascade)) return -1;
 
-	fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
-	wh = cv::Size((int)w, (int)h);
-	writer.open(filepath, fourcc, f, wh);
-	if(!writer.isOpened()) return -1;
+
+	if(stat & 4)
+	{
+		fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
+		wh = cv::Size((int)w, (int)h);
+		writer.open(PATH4MP4FILE, fourcc, f, wh);
+		if(!writer.isOpened()) return -1;
+	}
+
 
 	s = std::chrono::system_clock::now();
 
@@ -73,34 +126,44 @@ int main(int argc, char **argv)
 	for(int cnt=0; ; cnt++)
 	{
 		cap >> img;
-		writer << img;
-
-		cascade.detectMultiScale(img, faces, 1.1, 3, 0, cv::Size(50, 50));
-
-		for(int i=0; i<faces.size(); i++)
+		if(!(stat & 1))
 		{
-			left_up = cv::Point(faces[i].x, faces[i].y);
-			right_down = cv::Point(faces[i].x+faces[i].width, faces[i].y+faces[i].height);
-			cv::rectangle(img, left_up, right_down, cv::Scalar(0,0,255), 3);
-		}
-		str = "frame counter : " + std::to_string(cnt);
-		cv::putText(img, str, cv::Point(10,22), 1, 1.0, cv::Scalar(0,255,0));
 		e = std::chrono::system_clock::now();
 		d = std::chrono::duration_cast<std::chrono::microseconds>(e-s).count();
 		str = "passed " + std::to_string((float)d/1000000) + " seconds";
 		cv::putText(img, str, cv::Point(330,22), 1, 1.0, cv::Scalar(255,255,255));
+		str = "frame counter : " + std::to_string(cnt);
+		cv::putText(img, str, cv::Point(10,22), 1, 1.0, cv::Scalar(0,255,0));
+		}
+
+
+		if(stat & 2)
+		{
+			cascade.detectMultiScale(img, faces, 1.1, 3, 0, cv::Size(50, 50));
+			for(int i=0; i<faces.size(); i++)
+			{
+				left_up = cv::Point(faces[i].x, faces[i].y);
+				right_down = cv::Point(faces[i].x+faces[i].width, faces[i].y+faces[i].height);
+				cv::rectangle(img, left_up, right_down, cv::Scalar(0,0,255), 3);
+			}
+		}
+
+
+		if(stat & 4)
+		{
+			writer << img;
+			if(stat == 4) std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000/f)));
+		}
+
 
 		cv::imshow("webcamera  ( q : quit )", img);
-
 //		if(cv::waitKey(30) >= 0) break;
 		const int key = cv::waitKey(1);
-		if(key == 'q') break; // 113
-		
-//		std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000/f)));
+		if(key == 'q') break; // 113(0x71)
 	}
 	
 	cv::destroyAllWindows();
-	writer.release();
+	if(stat && 2) writer.release();
 	cap.release();
 
 	return 0;
