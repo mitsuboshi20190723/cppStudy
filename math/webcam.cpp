@@ -71,22 +71,16 @@ int main(int argc, char **argv)
 		{
 			stat += 1;
 			path4capture = argv[cnt];
-			std::cout << "Camera device : " << path4capture << std::endl;
-
 		}
 		if(std::string(argv[cnt]).find(".xml") != std::string::npos)
                 {
-                        stat += 2;
-                        path4cascade = argv[cnt];
-                        std::cout << "Cascade file  : " << path4cascade << std::endl;
-
+			stat += 2;
+			path4cascade = argv[cnt];
                 }
 		if(std::string(argv[cnt]).find(".mp4") != std::string::npos)
                 {
-                        stat += 4;
-                        path4mp4file = argv[cnt];
-                        std::cout << "For REC file  : " << path4mp4file << std::endl;
-
+			stat += 4;
+			path4mp4file = argv[cnt];
                 }
 	}
 
@@ -94,6 +88,7 @@ int main(int argc, char **argv)
 	if(!(stat & 1)) path4capture = default_dev;
 	cap = cv::VideoCapture(path4capture);
 	if(!cap.isOpened()) return -1;
+	std::cout << "Camera device : " << path4capture << std::endl;
 
 	w = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 	h = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
@@ -109,6 +104,7 @@ int main(int argc, char **argv)
 
 
 	if(stat & 2) if(!cascade.load(path4cascade)) return -1;
+	std::cout << "Found Cascade : " << path4cascade << std::endl;
 
 
 	if(stat & 4)
@@ -118,11 +114,12 @@ int main(int argc, char **argv)
 		writer.open(PATH4MP4FILE, fourcc, f, wh);
 		if(!writer.isOpened()) return -1;
 	}
+	std::cout << "Open REC file : " << path4mp4file << std::endl;
 
 
 	s = std::chrono::system_clock::now();
 
-//	cv::namedWindow("camera", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("webcamera  ( q : quit )", cv::WINDOW_AUTOSIZE);
 	for(int cnt=0; ; cnt++)
 	{
 		cap >> img;
@@ -163,7 +160,7 @@ int main(int argc, char **argv)
 	}
 	
 	cv::destroyAllWindows();
-	if(stat && 2) writer.release();
+	if(stat && 4) writer.release();
 	cap.release();
 
 	return 0;
