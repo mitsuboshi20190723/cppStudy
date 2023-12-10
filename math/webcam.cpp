@@ -35,7 +35,7 @@
 int main(int argc, char **argv)
 {
 	char stat, default_dev[] = "/dev/video0";
-	int d;
+	int d, cnt;
 	std::chrono::system_clock::time_point s, e;
 
 	char *path4capture;
@@ -65,23 +65,23 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	stat = 0;
-	for(int cnt=1; cnt < argc; cnt++)
+	for(cnt=1; cnt < argc; cnt++)
 	{
 		if(std::string(argv[cnt]).find("/dev") != std::string::npos)
 		{
 			stat += 1;
 			path4capture = argv[cnt];
 		}
-		if(std::string(argv[cnt]).find(".xml") != std::string::npos)
-                {
+		else if(std::string(argv[cnt]).find(".xml") != std::string::npos)
+		{
 			stat += 2;
 			path4cascade = argv[cnt];
-                }
-		if(std::string(argv[cnt]).find(".mp4") != std::string::npos)
-                {
+		}
+		else if(std::string(argv[cnt]).find(".mp4") != std::string::npos)
+		{
 			stat += 4;
 			path4mp4file = argv[cnt];
-                }
+		}
 	}
 
 
@@ -94,8 +94,7 @@ int main(int argc, char **argv)
 	h = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 	f = cap.get(cv::CAP_PROP_FPS);
 	t = cap.get(cv::CAP_PROP_FORMAT);
-	std::cout << "w=" << w << ", h=" << h << ", fps=" << f << std::endl;
-	std::cout << "FORMAT=" << t << std::endl;
+	std::cout << "w=" << w << ", h=" << h << ", fps=" << f << ", FORMAT=" << t << std::endl;
 
 	cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
 	cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
@@ -117,20 +116,23 @@ int main(int argc, char **argv)
 	std::cout << "Open REC file : " << path4mp4file << std::endl;
 
 
-	s = std::chrono::system_clock::now();
-
 	cv::namedWindow("webcamera  ( q : quit )", cv::WINDOW_AUTOSIZE);
-	for(int cnt=0; ; cnt++)
+
+	s = std::chrono::system_clock::now();
+	cnt = 0;
+	for(;;)
 	{
 		cap >> img;
+
 		if(!(stat & 1))
 		{
-		e = std::chrono::system_clock::now();
-		d = std::chrono::duration_cast<std::chrono::microseconds>(e-s).count();
-		str = "passed " + std::to_string((float)d/1000000) + " seconds";
-		cv::putText(img, str, cv::Point(330,22), 1, 1.0, cv::Scalar(255,255,255));
-		str = "frame counter : " + std::to_string(cnt);
-		cv::putText(img, str, cv::Point(10,22), 1, 1.0, cv::Scalar(0,255,0));
+			e = std::chrono::system_clock::now();
+			d = std::chrono::duration_cast<std::chrono::microseconds>(e-s).count();
+			str = "passed " + std::to_string((float)d/1000000) + " seconds";
+			cv::putText(img, str, cv::Point(330,22), 1, 1.0, cv::Scalar(255,255,255));
+			str = "frame counter : " + std::to_string(cnt);
+			cv::putText(img, str, cv::Point(10,22), 1, 1.0, cv::Scalar(0,255,0));
+			cnt++;
 		}
 
 
@@ -154,9 +156,7 @@ int main(int argc, char **argv)
 
 
 		cv::imshow("webcamera  ( q : quit )", img);
-//		if(cv::waitKey(30) >= 0) break;
-		const int key = cv::waitKey(1);
-		if(key == 'q') break; // 113(0x71)
+		if(cv::waitKey(1) == 'q') break; // 113(0x71)  if any key  (cv::waitKey(1) >= 0)
 	}
 	
 	cv::destroyAllWindows();
