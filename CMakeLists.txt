@@ -32,8 +32,8 @@ if(OpenCV_FOUND)
     include_directories(${OpenCV_INCLUDE_DIRS})
 
 
-    add_executable(webcam math/webcam.cpp)
-    target_link_libraries(webcam ${OpenCV_LIBS})
+    add_executable(raspicam serial/webcam.cpp)
+    target_link_libraries(raspicam ${OpenCV_LIBS})
 
 
 #    add_executable(fd math/fd.cpp)
