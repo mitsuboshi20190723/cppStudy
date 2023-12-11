@@ -1,7 +1,7 @@
 /*
  *  2023.12.12
  *  joycon.c
- *  ver 0.9
+ *  ver.0.9
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
