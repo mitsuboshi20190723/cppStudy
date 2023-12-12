@@ -1,7 +1,7 @@
 /*
  *  2023.12.12
  *  joycon.c
- *  ver.0.9
+ *  ver.1.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -16,6 +16,11 @@
 
 #define JOY_DEV "/dev/input/js0"
 
+
+int A(int a){ return a; }
+int B(int b){ return b; }
+int P(int a){ return a>0 ? a : 0; }
+int N(int a){ return a<0 ? a : 0; }
 
 int main(int argc, char *argv[])
 {
@@ -50,18 +55,21 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-		printf("\n\n\n\n\nJOY NAME : %s  ( %d axis,  %d bottons )\n\n", name_of_joycon, num_of_axis, num_of_buttons);
-		printf("         %6d                      %6d            \n", joy_a[2], joy_a[5]);
-		printf("         %3d                      %3d            \n", joy_b[4], joy_b[5]);
-		printf("                     %3d    %3d                     \n", joy_b[6], joy_b[7]);
-		printf("         %6d                      %3d            \n",         joy_a[7],         joy_b[3]);
-		printf("    %6d    %6d            %3d       %3d       \n", joy_a[6], joy_a[6], joy_b[2], joy_b[1]);
-		printf("         %6d                      %3d            \n",         joy_a[7],         joy_b[0]);
-		printf("                                                 \n");
-		printf("         %6d                      %6d            \n",         joy_a[1],         joy_a[4]);
-		printf("    %6d    %6d            %6d    %6d       \n", joy_a[0], joy_a[0], joy_a[3], joy_a[3]);
-		printf("         %6d                      %6d            \n",         joy_a[1],         joy_a[4]);
-                printf("\n\n\n\n\n\nCtrl+C to exit.\n");
+		printf("\n\n\n\nJOY NAME : %s ( %d axis,  %d bottons )\n", name_of_joycon, num_of_axis, num_of_buttons);
+		printf("                                              \n");
+		printf("         %6d                      %6d         \n",       A(joy_a[2]),              A(joy_a[5]));
+		printf("          %d                               %d \n",       B(joy_b[4]),              B(joy_b[5]));
+		printf("                  %d               %d         \n",       B(joy_b[6]),              B(joy_b[7]));
+		printf("       %6d                           %d       \n",       N(joy_a[1]),              B(joy_b[3]));
+		printf("  %6d    %6d                 %d         %d    \n", N(joy_a[0]), P(joy_a[0]), B(joy_b[2]), B(joy_b[1]));
+		printf("       %6d                           %d       \n",       P(joy_a[1]),              B(joy_b[0]));
+		printf("                                              \n");
+		printf("       %6d                      %6d           \n",       N(joy_a[7]),              N(joy_a[4]));
+		printf("  %6d    %6d            %6d    %6d            \n", N(joy_a[6]), P(joy_a[6]), N(joy_a[3]), P(joy_a[3]));
+		printf("       %6d                      %6d           \n",       P(joy_a[7]),              P(joy_a[4]));
+		printf("                                              \n");
+		printf("                                    %d        \n",                                 B(joy_b[8]));
+		printf("\n\n\n\nCtrl+C to exit.                       \n");
 
 		usleep(500);
 	}
