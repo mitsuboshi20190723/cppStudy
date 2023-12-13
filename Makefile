@@ -25,7 +25,7 @@ ics_servo_rom	: serial/ics_servo_rom.cpp
 	g++ -std=c++11 -o $(BUILD)/ICS_SERVO_ROM serial/ics_servo_rom.cpp -lics3
 
 fd	: math/fd.cpp
-	g++ -o $(BUILD)/FD math/fd.cpp `pkg-config --cflags opencv4` `pkg-config --libs opencv4` -ldlib -llapack -lblas  -lX11 -lpthread -ljpeg -lpng -lgif
+	g++ -o $(BUILD)/FD math/fd.cpp `pkg-config --cflags opencv4` `pkg-config --libs opencv4` -ldlib -llapack -lblas  -lX11 -lpthread -ljpeg -lpng -lgif -lwebp
 
 
 clean	:
