@@ -70,7 +70,7 @@ if(OpenCV_FOUND AND CUDA_FOUND)
  
  
     cuda_add_executable(webcamera cuda/webcamera.cpp)
-    target_link_libraries(face_detect ${OpenCV_LIBS})
+    target_link_libraries(webcamera ${OpenCV_LIBS})
 
 endif(OpenCV_FOUND AND CUDA_FOUND)
 
