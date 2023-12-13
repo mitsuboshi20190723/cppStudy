@@ -15,7 +15,7 @@ add_executable(perceptron math/perceptron.cpp)
 add_executable(ffer math/ffer.cpp)
 
 
-add_executable(joynics2 serial/joynics2.cpp)
+#add_executable(joynics2 serial/joynics2.cpp)
 
 
 add_executable(kservo serial/kservo.c)
@@ -32,7 +32,7 @@ if(OpenCV_FOUND)
     include_directories(${OpenCV_INCLUDE_DIRS})
 
 
-    add_executable(raspicam serial/webcam.cpp)
+    add_executable(raspicam serial/raspicam.cpp)
     target_link_libraries(raspicam ${OpenCV_LIBS})
 
 
@@ -53,6 +53,24 @@ if(CUDA_FOUND)
 
 
     cuda_add_executable(matmul cuda/matmul.cu)
+ 
+ 
     cuda_add_executable(hfd cuda/hfd.cu)
 
 endif(CUDA_FOUND)
+
+
+
+if(OpenCV_FOUND AND CUDA_FOUND)
+    message("depend OpenCV and CUDA")
+
+
+    cuda_add_executable(face_detect cuda/face_detect.cpp)
+    target_link_libraries(face_detect dlib ${OpenCV_LIBS})
+ 
+ 
+    cuda_add_executable(webcamera cuda/webcamera.cpp)
+    target_link_libraries(face_detect ${OpenCV_LIBS})
+
+endif(OpenCV_FOUND AND CUDA_FOUND)
+
