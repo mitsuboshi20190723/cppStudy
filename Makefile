@@ -1,7 +1,7 @@
 BUILD = build
 
 mkdirbuild	:
-	mkdir build && echo "make hw or make gauss or make ffer or make perceptron or make joycon or make kservo or make ics_servo_rom or make fd"
+	mkdir build && echo "make hw or make gauss or make ffer or make perceptron or make joycon or make hb or make kservo or make ics_servo_rom or make fd"
 
 hw	: hello_world/hw.c
 	gcc -o $(BUILD)/HW hello_world/hw.c -w
@@ -20,6 +20,9 @@ joycon	: serial/joycon.c
 
 kservo	: serial/kservo.c
 	gcc serial/kservo.c -o $(BUILD)/KSERVO
+
+hb	: serial/hb.c
+	gcc serial/hb.c -o $(BUILD)/HB
 
 ics_servo_rom	: serial/ics_servo_rom.cpp
 	g++ -std=c++11 -o $(BUILD)/ICS_SERVO_ROM serial/ics_servo_rom.cpp -lics3
