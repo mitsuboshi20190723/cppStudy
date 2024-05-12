@@ -15,7 +15,7 @@ int main()
 {
 	int heartbeat;
 
-	for (heartbeat=1;;heartbeat=++heartbeat%2)
+	for(heartbeat=1;;heartbeat=++heartbeat%2)
 	{
 		printf("%d\n", heartbeat);
 		usleep(500000); /* sleep(0.5); <- error */
