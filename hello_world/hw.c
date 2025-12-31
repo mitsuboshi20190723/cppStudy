@@ -1,7 +1,7 @@
 /*
  *  2022.2.22
  *  hw.c
- *  ver 2.0
+ *  ver.2.0
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
