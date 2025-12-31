@@ -1,7 +1,7 @@
 /*
  *  2022.2.22
  *  hw.cpp
- *  ver 2.2
+ *  ver.2.2
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
