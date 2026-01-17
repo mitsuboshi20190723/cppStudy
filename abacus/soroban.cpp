@@ -1,7 +1,7 @@
 /*
- *  2022.3.19
+ *  2026.1.18
  *  soroban.cpp
- *  ver 0.5
+ *  ver.0.6
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -9,9 +9,10 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <thread> // for sleep
 #include "soroban.hpp"
 #include "sorobanframe.hpp"
+
+char EG[] = "./hexsoroban -Q -d -k 15";
 
 
 void chk_arg(int c, char **v, waku *w)
@@ -26,24 +27,19 @@ void chk_arg(int c, char **v, waku *w)
 	{
 		if(v[i][0] == '-')
 		{
-			switch(v[i][1])
+			if(v[i][1] == '0' || v[i][1] == 'Q' || v[i][1] == 'q') p.set_chartype(v[i][1]);
+			else if(v[i][1] == 'k')
 			{
-			case '0':
-			case 'Q':
-			case 'q':
-				p.set_chartype(v[i][1]);
-				break;
-
-			case 'k':
 				i++;
 				k = std::stoi(v[i]);
 				std::cout << k << std::endl;
 				if(k>0 && k<16) w->set_keta(k);
-				else{std::cout << "-k overflow. Please input 1-15." << std::endl; exit(0);}
-				break;
-
-			default:
+				else { std::cout << "-k overflow. Please input 1-15." << std::endl; exit(0); }
+			}
+			else
+			{
 				std::cout << "-" << v[i][1] << " : unknown option." << std::endl;
+				std::cout << std::endl << "For example > " << EG << std::endl << std::endl;
 				exit(0);
 			}
 		}
@@ -73,7 +69,7 @@ int main(int argc, char **argv)
 		w.set_beads(b);
 
 		w.print_waku();
-	}
+	} 
 
 	return 0;
 }
