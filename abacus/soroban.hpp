@@ -1,19 +1,14 @@
 /*
- *  2022.3.19
+ *  2026.1.18
  *  soroban.hpp
- *  ver 0.5
+ *  ver.0.5
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
 
 #ifndef SOROBAN_HPP
 #define SOROBAN_HPP
-/*
-#include <string>
-#include <iostream>
-#include <vector>
-#include <thread> // for sleep
-*/
+
 
 #include <vector>
 
@@ -21,9 +16,7 @@ class place
 {
 private:
 	static int type;
-	static std::string str[3];
-
-//	int old;
+	static std::string Qq0[4];
 
 public:
 	int n; /* number */
@@ -57,8 +50,9 @@ typedef struct quotient_remainder{int q; int r;} divans;
 struct op_num{char op; double num;};
 
 divans division_answer(int a, int b); /* a waru b */
-op_num get_operator(std::string str);
+op_num get_operator(std::string on);
 
 void simple_print(beads b);
+
 
 #endif /* SOROBAN_HPP */

@@ -1,7 +1,7 @@
 /*
  *  2026.1.18
  *  soroban.cpp
- *  ver.0.6
+ *  ver.0.8
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -63,13 +63,13 @@ int main(int argc, char **argv)
 		std::cout << "Input > ";
 		std::cin >> s;
 		on = get_operator(s);
+		if(on.op == 'q') exit(0);
 
 		b.to_beads((long long int)on.num);
-	//	b.to_beads(on.num);
 		w.set_beads(b);
 
 		w.print_waku();
-	} 
+	}
 
 	return 0;
 }
