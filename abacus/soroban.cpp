@@ -1,5 +1,5 @@
 /*
- *  2026.1.18
+ *  2026.1.19
  *  soroban.cpp
  *  ver.0.8
  *  Kunihito Mitsuboshi
@@ -33,8 +33,8 @@ void chk_arg(int c, char **v, waku *w)
 				i++;
 				k = std::stoi(v[i]);
 				std::cout << k << std::endl;
-				if(k>0 && k<16) w->set_keta(k);
-				else { std::cout << "-k overflow. Please input 1-15." << std::endl; exit(0); }
+				if(k>0 && k<20) w->set_keta(k);
+				else { std::cout << "-k overflow. Please input 1-19." << std::endl; exit(0); }
 			}
 			else
 			{
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 		std::cin >> s;
 		on = get_operator(s);
 		if(on.op == 'q') exit(0);
-
+		if(on.op == 'n') w.make_waku();
 		b.to_beads((long long int)on.num);
 		w.set_beads(b);
 

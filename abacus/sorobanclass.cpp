@@ -1,7 +1,7 @@
 /*
- *  2022.3.19
+ *  2026.1.19
  *  sorobanclass.cpp
- *  ver 0.2
+ *  ver.0.3
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,34 +11,24 @@
 #include "soroban.hpp"
 
 
-
-std::string place::str[3] = {"0123456789ABCDEF", "QRSTUVWXYZABCDEF", "qrstuvwxyzabcdef"};
+std::string place::Qq0[4] = {"0123456789ABCDEF.hH", "QRSTUVWXYZABCDEF", "qrstuvwxyzabcdef", "0123456789ABCDEF"};
 int place::type = -1;
+
 
 std::string place::set_chartype(char type)
 {
-	switch(type)
-	{
-	case '0':
-		this->type = 0;
-		return this->str[0];
-	case 'Q':
-		this->type = 1;
-		return this->str[1];
-	case 'q':
-		this->type = 2;
-		return this->str[2];
-	}
-	return nullptr;
+	if(type == 'Q') { this->type = 1; return this->Qq0[1]; }
+	else if(type == 'q') { this->type = 2; return this->Qq0[2]; }
+	else if(type == '0') { this->type = 3; return this->Qq0[3]; }
+	else return nullptr;
 }
 
 int place::set_num(int n)
 {
 	if(n<0 || n>0xF) return -1;
 
-//	this->old = this->n;
 	this->n = n;
-	this->c = this->str[this->type][n];
+	this->c = this->Qq0[this->type][n];
 
 	return this->n;
 
@@ -48,16 +38,16 @@ int place::get_num(char *c)
 {
 	int i;
 
-	for(i=0; i<16; i++) if(*c == this->str[1][i]) return i;
-	for(i=0; i<16; i++) if(*c == this->str[2][i]) return i;
+	for(i=0; i<16; i++) if(*c == this->Qq0[1][i]) return i;
+	for(i=0; i<16; i++) if(*c == this->Qq0[2][i]) return i;
 	for(i=0; i<10; i++)
 	{
 		if(*c == '1')
 		{
-			for(int j=0; j<6; j++) if(*(c+1) == this->str[0][j]) return 10+j;
+			for(int j=0; j<6; j++) if(*(c+1) == this->Qq0[3][j]) return 10+j;
 			return 1;
 		}
-		else if(*c == this->str[0][i]) return i;
+		else if(*c == this->Qq0[3][i]) return i;
 	}
 	return -1;
 }
@@ -133,8 +123,8 @@ int beads::zero()
 	{
 		for(int i=0; i<this->p[0].i; i++)
 		{
-			if(i < this->p.size()) if(this->p[i].n == 0) d++;
-			else a = this->p[0].i - this->p.size();
+			if(i < this->p.size()) { if(this->p[i].n == 0) d++; }
+			else a = this->p[0].i - this->p.size(); // else a++;
 		}
 		for(int i=0; i<d; i++) this->p.erase(this->p.begin());
 		count = this->p.end()[0].i;
@@ -164,7 +154,7 @@ int beads::zero()
 	{
 		if(this->p[count-1].i-1 != this->p[count].i) break;
 	}
-	if(count != this->p.size()) std::cout << "ZERO ERROR !" << std::endl; ///////////////
+	if(count != this->p.size()) std::cout << "ZERO ERROR !" << std::endl;
 
 	return count;
 }
