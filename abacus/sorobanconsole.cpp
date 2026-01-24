@@ -1,18 +1,19 @@
 /*
- *  2022.3.18
+ *  2026.1.24
  *  sorobanconsole.cpp
- *  ver 1.0
+ *  ver.1.1
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
 
 #include <string>
 #include <iostream>
+#include <thread> // for sleep
 #include "sorobanframe.hpp"
 
 
-std::string waku::tama[4] = {"  |  <|> <|> <|>", " <|>  |  <|> <|>", " <|> <|>  |  <|>", " <|> <|> <|>  | "};
-
+std::string waku::tama[4] = {"  |  <-> <-> <->", " <->  |  <-> <->", " <-> <->  |  <->", " <-> <-> <->  | "};
+// std::string waku::tama[4] = {"  |  <|> <|> <|>", " <|>  |  <|> <|>", " <|> <|>  |  <|>", " <|> <|> <|>  | "};
 
 int waku::make_waku()
 {

@@ -1,7 +1,7 @@
 /*
- *  2022.3.18
+ *  2026.1.24
  *  sorobanframe.hpp
- *  ver 1.0
+ *  ver.1.1
  *  Kunihito Mitsuboshi
  *  license(Apache-2.0) at http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -9,9 +9,10 @@
 #ifndef SOROBANFRAME_HPP
 #define SOROBANFRAME_HPP
 
+
 #include "soroban.hpp"
 
-#define KETA_M 15
+#define KETA_M 19
 #define KETA_W 4
 
 class waku
@@ -29,5 +30,6 @@ public:
 	int set_place(place p);
 	int set_beads(beads b);
 };
+
 
 #endif /* SOROBANFRAME_HPP */
